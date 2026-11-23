@@ -15,6 +15,10 @@ export interface Config {
   dbPoolMax: number;
   /** Segredo do HMAC do CPF. Opcional em desenvolvimento/teste. */
   cpfPepper: string | undefined;
+  /** Segredo do cookie de sessão. Opcional em desenvolvimento/teste. */
+  sessionSecret: string | undefined;
+  /** URL base para montar links de verificação de e-mail. */
+  appBaseUrl: string;
 }
 
 export class ConfigError extends Error {
@@ -25,7 +29,7 @@ export class ConfigError extends Error {
 }
 
 const AMBIENTES: readonly Ambiente[] = ['development', 'test', 'production'];
-const TAMANHO_MINIMO_PEPPER = 32;
+const TAMANHO_MINIMO_SEGREDO = 32;
 
 function inteiroPositivo(
   valor: string | undefined,
@@ -62,23 +66,41 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const dbPoolMax = inteiroPositivo(env.DB_POOL_MAX, 5, 'DB_POOL_MAX', problemas);
   const databaseUrl = textoOpcional(env.DATABASE_URL);
   const cpfPepper = textoOpcional(env.CPF_PEPPER);
+  const sessionSecret = textoOpcional(env.SESSION_SECRET);
+  const appBaseUrlBruta = textoOpcional(env.APP_BASE_URL) ?? `http://localhost:${porta}`;
+  const appBaseUrl = appBaseUrlBruta.replace(/\/+$/, '');
 
   if (databaseUrl && !/^postgres(ql)?:\/\//.test(databaseUrl)) {
     problemas.push('DATABASE_URL deve começar com postgres:// ou postgresql://.');
   }
-  if (cpfPepper && cpfPepper.length < TAMANHO_MINIMO_PEPPER) {
-    problemas.push(`CPF_PEPPER deve ter pelo menos ${TAMANHO_MINIMO_PEPPER} caracteres.`);
+  if (cpfPepper && cpfPepper.length < TAMANHO_MINIMO_SEGREDO) {
+    problemas.push(`CPF_PEPPER deve ter pelo menos ${TAMANHO_MINIMO_SEGREDO} caracteres.`);
+  }
+  if (sessionSecret && sessionSecret.length < TAMANHO_MINIMO_SEGREDO) {
+    problemas.push(`SESSION_SECRET deve ter pelo menos ${TAMANHO_MINIMO_SEGREDO} caracteres.`);
+  }
+  if (!/^https?:\/\//.test(appBaseUrl)) {
+    problemas.push('APP_BASE_URL deve começar com http:// ou https://.');
   }
   if (ambiente === 'production') {
     if (!databaseUrl) problemas.push('DATABASE_URL é obrigatória em produção.');
     if (!cpfPepper) problemas.push('CPF_PEPPER é obrigatório em produção.');
+    if (!sessionSecret) problemas.push('SESSION_SECRET é obrigatório em produção.');
   }
 
   if (problemas.length > 0) {
     throw new ConfigError(problemas);
   }
 
-  return { ambiente, porta, databaseUrl, dbPoolMax, cpfPepper };
+  return {
+    ambiente,
+    porta,
+    databaseUrl,
+    dbPoolMax,
+    cpfPepper,
+    sessionSecret,
+    appBaseUrl,
+  };
 }
 
 /** Carrega `.env` (se existir) para `process.env`, usando o recurso nativo do Node 22. */

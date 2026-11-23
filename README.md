@@ -11,7 +11,7 @@ Repositório do grupo para o trabalho final da disciplina **Programação Agênt
 
 - `proposta.md` — Pergunta, hipóteses individuais/do grupo, pedido do cenário, recorte do MVP e forma de observação (registrada em commit anterior a qualquer código).
 - `registro/` — Diário contínuo do grupo (`diario_grupo.md`) e registros individuais (`registro_lorenzo.md` e `registro_nicolas.md`), com previsões anotadas **antes** de cada etapa.
-- `app/` — Aplicação da semana acadêmica (a ser construída a partir da Semana 2).
+- `app/` — Aplicação da semana acadêmica (veja o passo a passo de execução em [app/README.md](app/README.md)).
 - `artigos/` — Artigos individuais finais em PDF (modelo SBC, até 6 páginas).
 - `passo_a_passo_cenario_8.md` — Guia de referência para condução do Cenário 8.
 

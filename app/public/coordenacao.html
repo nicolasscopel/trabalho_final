@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coordenação — Semana Acadêmica</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="aviso-topo">
+      Painel da Coordenação — utilize apenas participantes e atividades <strong>100% fictícios</strong>.
+    </div>
+
+    <header class="topo">
+      <div class="topo-conteudo">
+        <div class="marca">
+          <h1>Painel da Coordenação</h1>
+          <p>Cadastro de atividades e registro de presença</p>
+        </div>
+        <nav class="nav">
+          <a href="/">Participante</a>
+          <a href="/coordenacao.html" class="ativo">Coordenação</a>
+          <span id="coord-nav-usuario" class="meta"></span>
+          <button id="btn-coord-sair" type="button" class="btn-secundario oculto">Sair</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <div id="coord-msg" class="alerta oculto" role="status"></div>
+
+      <section id="coord-login-card" class="card">
+        <h2>Acesso da Coordenação</h2>
+        <p id="coord-aviso-papel" class="alerta alerta-aviso oculto"></p>
+        <form id="form-coord-login">
+          <label>
+            CPF (fictício da coordenação)
+            <input name="cpf" type="text" inputmode="numeric" required />
+          </label>
+          <label>
+            Senha
+            <input name="senha" type="password" required />
+          </label>
+          <button type="submit" class="btn-primario">Entrar como coordenação</button>
+        </form>
+      </section>
+
+      <div id="coord-painel" class="container oculto" style="margin: 0; padding: 0">
+        <section class="card">
+          <h2>Nova Atividade</h2>
+          <form id="form-nova-atividade">
+            <label>
+              Título
+              <input name="titulo" type="text" minlength="3" maxlength="200" required />
+            </label>
+            <label>
+              Descrição (opcional)
+              <textarea name="descricao" rows="2"></textarea>
+            </label>
+            <div class="grid-2">
+              <label>
+                Início
+                <input name="inicio" type="datetime-local" required />
+              </label>
+              <label>
+                Fim
+                <input name="fim" type="datetime-local" required />
+              </label>
+            </div>
+            <div class="grid-2">
+              <label>
+                Carga horária (minutos)
+                <input name="cargaHorariaMinutos" type="number" min="1" value="60" required />
+              </label>
+              <label>
+                Vagas
+                <input name="vagas" type="number" min="1" value="30" required />
+              </label>
+            </div>
+            <button type="submit" class="btn-primario">Cadastrar atividade</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <h2>Atividades Cadastradas</h2>
+          <div id="lista-coord-atividades" class="lista-atividades"></div>
+        </section>
+
+        <section class="card">
+          <h2>Inscritos e Chamada de Presença</h2>
+          <div class="grid-2" style="margin-bottom: 1rem">
+            <label>
+              Atividade
+              <select id="select-atividade"></select>
+            </label>
+            <label>
+              Buscar por nome ou e-mail
+              <input id="input-busca-inscrito" type="search" placeholder="Digite para filtrar..." />
+            </label>
+          </div>
+          <p id="resumo-presenca" class="meta"></p>
+          <div style="overflow-x: auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>E-mail</th>
+                  <th>Presença</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="tabela-inscritos"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="/coordenacao.js"></script>
+  </body>
+</html>

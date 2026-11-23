@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Semana Acadêmica — Inscrição e Presença</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="aviso-topo">
+      Ambiente acadêmico de testes — informe apenas dados <strong>100% fictícios</strong> (nome, e-mail e CPF fictícios).
+    </div>
+
+    <header class="topo">
+      <div class="topo-conteudo">
+        <div class="marca">
+          <h1>Semana Acadêmica</h1>
+          <p>Inscrição, presença e certificado num lugar só</p>
+        </div>
+        <nav class="nav">
+          <a href="/" class="ativo">Participante</a>
+          <a href="/coordenacao.html">Coordenação</a>
+          <span id="nav-usuario" class="meta"></span>
+          <button id="btn-sair" type="button" class="btn-secundario oculto">Sair</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <div id="mensagem-global" class="alerta oculto" role="status"></div>
+
+      <section id="secao-acesso" class="card">
+        <div class="abas">
+          <button id="tab-entrar" type="button" class="aba ativa">Entrar (CPF + Senha)</button>
+          <button id="tab-cadastro" type="button" class="aba">Criar Conta</button>
+          <button id="tab-verificar" type="button" class="aba">Verificar E-mail</button>
+        </div>
+
+        <form id="form-login">
+          <label>
+            CPF (fictício)
+            <input name="cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" required />
+          </label>
+          <label>
+            Senha
+            <input name="senha" type="password" minlength="8" required />
+          </label>
+          <button type="submit" class="btn-primario">Entrar</button>
+        </form>
+
+        <form id="form-cadastro" class="oculto">
+          <label>
+            Nome completo (para o certificado)
+            <input name="nome" type="text" minlength="2" maxlength="120" required />
+          </label>
+          <label>
+            E-mail (fictício)
+            <input name="email" type="email" required />
+          </label>
+          <label>
+            CPF (fictício — armazenado apenas como hash irreversível)
+            <input name="cpf" type="text" inputmode="numeric" placeholder="000.000.000-00" required />
+          </label>
+          <label>
+            Senha (mínimo 8 caracteres)
+            <input name="senha" type="password" minlength="8" maxlength="128" required />
+          </label>
+          <button type="submit" class="btn-primario">Criar conta de participante</button>
+        </form>
+
+        <div id="caixa-sandbox" class="alerta alerta-aviso oculto" style="margin-top: 1rem"></div>
+
+        <div id="painel-verificar" class="oculto">
+          <form id="form-verificar">
+            <label>
+              Token de verificação recebido
+              <input name="token" type="text" required />
+            </label>
+            <button type="submit" class="btn-primario">Confirmar e-mail</button>
+          </form>
+
+          <hr style="margin: 1.25rem 0; border: none; border-top: 1px solid var(--border)" />
+
+          <form id="form-reenviar">
+            <p class="meta">Precisa gerar um novo token de verificação? Confirme seu CPF e senha:</p>
+            <label>
+              CPF (fictício)
+              <input name="cpf" type="text" inputmode="numeric" required />
+            </label>
+            <label>
+              Senha
+              <input name="senha" type="password" required />
+            </label>
+            <button type="submit" class="btn-secundario">Gerar novo link de verificação</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="secao-perfil" class="card oculto">
+        <div class="atividade-item" style="border: none; padding: 0">
+          <div>
+            <h2 id="perfil-nome" style="margin-bottom: 0.2rem"></h2>
+            <p id="perfil-email" class="meta"></p>
+          </div>
+          <div class="acoes">
+            <span id="perfil-badge-verificado" class="badge"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="atividade-item" style="border: none; padding: 0 0 0.75rem">
+          <h2 style="margin: 0">Programação e Inscrições</h2>
+          <button id="btn-atualizar-atividades" type="button" class="btn-secundario">
+            Atualizar vagas
+          </button>
+        </div>
+        <div id="lista-atividades" class="lista-atividades"></div>
+      </section>
+
+      <section id="secao-minhas-inscricoes" class="card oculto">
+        <h2>Minhas Inscrições</h2>
+        <div id="lista-minhas-inscricoes" class="lista-atividades"></div>
+      </section>
+    </main>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verificar E-mail — Semana Acadêmica</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="aviso-topo">
+      Ambiente acadêmico de testes — utilize apenas dados <strong>100% fictícios</strong>.
+    </div>
+
+    <header class="topo">
+      <div class="topo-conteudo">
+        <div class="marca">
+          <h1>Semana Acadêmica</h1>
+          <p>Confirmação de e-mail</p>
+        </div>
+        <nav class="nav">
+          <a href="/">Voltar para Inscrições</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <h2>Confirmar e-mail</h2>
+        <div id="status-verificacao" class="alerta oculto" role="status"></div>
+        <form id="form-token-manual" style="margin-top: 1rem">
+          <label>
+            Token de verificação
+            <input id="input-token" name="token" type="text" required />
+          </label>
+          <button type="submit" class="btn-primario">Confirmar e-mail</button>
+        </form>
+      </section>
+    </main>
+
+    <script type="module" src="/verificar.js"></script>
+  </body>
+</html>
