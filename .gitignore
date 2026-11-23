@@ -1,6 +1,7 @@
 # Variáveis de ambiente, segredos e credenciais (nunca commitar!)
 .env
 .env.*
+!.env.example
 *.pem
 *.key
 *.secret

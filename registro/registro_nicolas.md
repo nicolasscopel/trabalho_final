@@ -76,8 +76,8 @@ Hora final: 16:22(-3:00)
 ## Etapa 2 — Esqueleto do projeto e modelagem mínima do banco (Dia 1)
 **Data:** 2026-11-23  
 **Hora inicial:** 08:24 (-03:00)  
-**Hora final:** [preencher ao encerrar]  
-**Harness / Modelo / Versão:** Antigravity CLI (`agy` v1.5.15) / Claude Opus 5.5 (High)  
+**Hora final:** 09:22(-03:00) *(ajustar ao horário real em que você fechar e commitar)*  
+**Harness / Modelo / Versão:** Antigravity CLI (`agy` v1.5.15) / Claude Opus 5.5 (High)  / Gemini 4 Hydrogen (Xhigh)
 **Ambiente local:** `node v22.22.1`, `npm 9.2.0`
 
 ### ANTES da etapa (commitar antes de rodar!)
@@ -107,13 +107,23 @@ Hora final: 16:22(-3:00)
   - Definir como contar vagas (coluna `vagas_ocupadas` vs. `COUNT` com *lock*) já impacta a meta de 30 solicitações simultâneas da Etapa 1.
 
 ### DEPOIS da etapa
-- **Hora de encerramento da etapa:** [...]
-- **Tempo real gasto:** [...] (Diferença em relação à previsão: [...])
-- **Gasto com modelo:** [...]
-- **O agente escolheu bibliotecas que eu conheço ou introduziu complexidade desnecessária?** [...]
-- **Tempo para subir o ambiente local:** [...]
-- **O que o agente fez e eu aceitei direto:** [...]
-- **O que eu tive de refazer ou corrigir:** [...]
-- **Onde travei / o que precisei aprender:** [...]
-- **O que surpreendeu:** [...]
-- **O que só entendi depois (preencher na Semana 3, se aplicável):** [...]
+- **Hora de encerramento da etapa:** 09:22(-03:00) *(ajustar ao encerrar a revisão final)*
+- **Tempo real gasto:** ~54min (08:24 às 09:22 — diferença de ~-32min em relação à previsão de 1h30min; ajustar com seu tempo total incluindo leitura/revisão)
+- **Gasto com modelo:** [113.4k tokens e todo o limite do Claude Opus 5.5 - Usado na criação geral dos arquivos]
+- **Bibliotecas e arquitetura geradas (fatos da sessão):**
+  - Produção: apenas `express` (`^5.3.0`) e `pg` (`^8.23.1`), sem ORM; criptografia/hash (`HMAC-SHA256`, `scrypt`, tokens) usando `node:crypto` nativo;
+  - Desenvolvimento: `typescript` (`^7.0.2`), `tsx`, `vitest`, `supertest` e `@types/*`;
+  - Estrutura em `app/`: separação `domain/` (entidades `Usuario`, `Atividade`, `Inscricao`, `Cpf`, `Email` e erros), `security/`, `config/`, `db/` (pool + executor de migrações) e `http/` (`createApp` desacoplado do `listen` + `/health` e `/health/db`);
+  - Schema aplicado (`001_schema_inicial.sql`): tabelas `usuarios`, `atividades` (com `vagas_ocupadas` + `CHECK`), `inscricoes` e `tokens_verificacao_email`, com validação confirmada via `npm run db:migrate` (idempotente) e `npm test` (**74/74 testes passando**, incluindo os 5 testes de integração contra o branch `teste` no Neon).
+- **O agente escolheu bibliotecas que eu conheço ou introduziu complexidade desnecessária?** [preencher em 1ª pessoa: você conhecia Express/pg/Vitest/Supertest? Achou a separação em domain/security/db na medida certa ou com camadas/classes além do esperado para o Dia 1?
+  Conhecia algumas, mas grande parte não sabia da existência, como o banco de dados neon]
+- **Tempo para subir o ambiente local:** [preencher em 1ª pessoa: quanto tempo levou entre criar projeto/branch no Neon, preencher `.env`, rodar `db:migrate` e ver os 74 testes passarem
+  45min +/- visto que foi necessária a criação do banco no neon]
+- **O que o agente fez e eu aceitei direto:** [preencher em 1ª pessoa após revisar `app/src/` e `app/db/migrations/001_schema_inicial.sql` — ex.: classes de domínio, escolha de UUIDs, coluna `vagas_ocupadas` com `CHECK`, regra provisória de não cancelar após presença, runner de migrações
+  praticamente toda a estruturação foi aceita]
+- **O que eu tive de refazer ou corrigir:** [preencher em 1ª pessoa: se corrigiu algo no SQL, `.env` ou código, ou "nenhuma alteração manual necessária"]
+- **Onde travei / o que precisei aprender:** [preencher em 1ª pessoa: ex.: criação do projeto/branch no Neon, URL `-pooler`, `sslmode=verify-full` e `enableChannelBinding`
+  o mais complicado foi a integração necessária com o Neon, mas após o agente gerar uma explicação e passo a passo consegui compreender]
+- **O que surpreendeu:** [preencher em 1ª pessoa: ex.: tempo real menor que o previsto, testes de integração já rodando contra um branch real no Neon com ROLLBACK, etc.
+  a capacidade de criação/estruturação do agente ]
+- **O que só entendi depois (preencher na Semana 3, se aplicável):** [preencher na Semana 3, se aplicável]
