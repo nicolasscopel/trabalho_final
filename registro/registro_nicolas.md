@@ -63,3 +63,57 @@ Hora final: 16:22(-3:00)
 - **Onde travei / o que precisei aprender:** [pontos levantados para atenção: pooling de conexões no Neon em *serverless*, empacotamento de fontes `.ttf` para `PDFKit` na Vercel, distinção entre hash de senha vs. criptografia/minimização de CPF e limites de *rate limit* em funções *serverless*]
 - **O que surpreendeu:** [a estruturação geral do projeto e comparativos. a visão do agente para funcionalidades que não informei]
 - **O que só entendi depois (preencher na Semana 3, se aplicável):** [preencher na Semana 3, se aplicável]
+
+
+---
+
+## Semana 2 — Sprint de 1 semana (início em 2026-11-23)
+- **2026-11-23:** Início da Semana 2. Registro da previsão da Etapa 2 commitado **antes** de rodar o agente e antes de qualquer código em `app/`.
+- **Stack herdada da Etapa 1:** Node.js + TypeScript + Express · PostgreSQL (Neon) · PDFKit · Vercel (*serverless*).
+
+---
+
+## Etapa 2 — Esqueleto do projeto e modelagem mínima do banco (Dia 1)
+**Data:** 2026-11-23  
+**Hora inicial:** 08:24 (-03:00)  
+**Hora final:** [preencher ao encerrar]  
+**Harness / Modelo / Versão:** Antigravity CLI (`agy` v1.5.15) / Claude Opus 5.5 (High)  
+**Ambiente local:** `node v22.22.1`, `npm 9.2.0`
+
+### ANTES da etapa (commitar antes de rodar!)
+- **Previsão de tempo:** 1h30min *(revisar/ajustar em 1ª pessoa antes do commit)*
+- **Escopo da etapa (o que conta como "concluída"):**
+  1. Projeto em `app/` inicializado com Node.js + TypeScript + Express (`package.json`, `tsconfig.json`, scripts `dev`/`build`/`start`);
+  2. Rota `GET /health` respondendo localmente;
+  3. Conexão com o Postgres (Neon) via variável de ambiente (`DATABASE_URL`) lida de `.env` — com `.env.example` versionado **sem valores reais**;
+  4. Script SQL de criação do schema mínimo aplicado no banco (migração inicial);
+  5. Nenhum segredo, `.env` ou dado pessoal real no `git status`.
+- **Entidades mínimas previstas (a confirmar com o Lorenzo):**
+  - `usuarios` — `id`, `nome`, `email` (único), `cpf_hash` (HMAC-SHA256, único), `senha_hash`, `email_verificado`, `papel` (`participante` | `coordenacao`), `criado_em`;
+  - `atividades` — `id`, `titulo`, `inicio`, `fim`, `carga_horaria`, `vagas`, `vagas_ocupadas` (ou contagem por inscrição);
+  - `inscricoes` — `id`, `usuario_id`, `atividade_id`, `status` (`ativa` | `cancelada`), `presente` (`boolean`, padrão `false`), `criado_em`; restrição de unicidade para inscrição ativa por usuário + atividade;
+  - `tokens_verificacao_email` — `id`, `usuario_id`, `token_hash` (SHA-256), `expira_em`, `usado_em`.
+- **O que vou delegar ao agente:** Criação do esqueleto do projeto (estrutura de pastas, configuração do TypeScript, Express, scripts npm), módulo de conexão com o Postgres usando *pool*, rota de *healthcheck*, rascunho do SQL de criação das tabelas/constraints a partir das entidades acima, `.env.example` e atualização deste registro.
+- **O que NÃO vou delegar:**
+  - Criação da conta/projeto no Neon e geração da `DATABASE_URL` e do *pepper* do CPF — feitos por mim, direto no `.env`, **sem colar credenciais no chat do agente**;
+  - Decisão final das entidades e da divisão de trabalho com o Lorenzo (decisão do grupo, registrada em `registro/diario_grupo.md`);
+  - Revisão linha a linha do SQL (constraints de unicidade, `CHECK` de vagas e de `inicio < fim`, chaves estrangeiras) antes de aplicar no banco;
+  - Escolha de adicionar ORM ou frameworks extras — se o agente propuser, preciso aprovar explicitamente (preferência por `pg` + SQL puro para entender o que roda).
+- **Onde acho que vai dar problema:**
+  - Configuração do TypeScript (ESM vs. CommonJS, `ts-node`/`tsx`) e compatibilidade entre `npm 9` e `node 22`;
+  - Conexão com o Neon: SSL obrigatório, string de conexão *pooled* vs. direta e comportamento do *pool* em ambiente *serverless* (Vercel) — risco de funcionar local e falhar no deploy;
+  - Estruturar o Express já pensando na Vercel (exportar o `app` separado do `listen`) sem superdimensionar a arquitetura;
+  - O agente introduzir complexidade desnecessária (ORM, camadas demais, bibliotecas que não conheço) e eu aceitar por pressa;
+  - Definir como contar vagas (coluna `vagas_ocupadas` vs. `COUNT` com *lock*) já impacta a meta de 30 solicitações simultâneas da Etapa 1.
+
+### DEPOIS da etapa
+- **Hora de encerramento da etapa:** [...]
+- **Tempo real gasto:** [...] (Diferença em relação à previsão: [...])
+- **Gasto com modelo:** [...]
+- **O agente escolheu bibliotecas que eu conheço ou introduziu complexidade desnecessária?** [...]
+- **Tempo para subir o ambiente local:** [...]
+- **O que o agente fez e eu aceitei direto:** [...]
+- **O que eu tive de refazer ou corrigir:** [...]
+- **Onde travei / o que precisei aprender:** [...]
+- **O que surpreendeu:** [...]
+- **O que só entendi depois (preencher na Semana 3, se aplicável):** [...]
