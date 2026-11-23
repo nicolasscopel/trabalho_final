@@ -128,7 +128,7 @@ Hora final: 16:22(-3:00)
 ## Etapa 3 — Inscrição, autenticação e painel de presença (Dia 2 / Passo 2.2)
 **Data:** 2026-11-23  
 **Hora inicial:** 10:09 (-03:00)  
-**Hora final:** `[preencher ao encerrar]`  
+**Hora final:** 10:53 (-03:00)
 **Harness / Modelo / Versão:** Antigravity CLI / Gemini 4 Hydrogen (Xhigh)  
 **Ambiente local:** `node v22.22.1`, `npm 9.2.0`
 
@@ -149,12 +149,12 @@ Hora final: 16:22(-3:00)
   - Proteger rotas contra *IDOR* no cancelamento e no acesso ao painel da coordenação.
 
 ### DEPOIS da etapa
-- **Hora de encerramento da etapa:** `[preencher ao encerrar]`
-- **Tempo real gasto:** `[...]`
-- **Gasto com modelo:** `[...]`
+- **Hora de encerramento da etapa:** `[10:53]`
+- **Tempo real gasto:** `[44 minutos]`
+- **Gasto com modelo:** `[176k tokens]`
 - **Decisões implícitas que o pedido original não especificava (e o que assumimos):** `[ex.: inscrição duplicada, reinscrição após cancelamento, cancelamento com presença já marcada, presença por atividade, verificação de e-mail antes da inscrição]`
-- **O que o agente fez e eu aceitei direto:** `[...]`
-- **O que eu tive de refazer ou corrigir:** `[...]`
-- **Onde travei / o que precisei aprender:** `[...]`
-- **O que surpreendeu:** `[...]`
+- **O que o agente fez e eu aceitei direto:** `[layout e criação das páginas]`
+- **O que eu tive de refazer ou corrigir:** `[correção de funcionalidades]`
+- **Onde travei / o que precisei aprender:** `[é mais difícil corrigir/alterar algo quando não foi criado com domínio]`
+- **O que surpreendeu:** `[a qualidade geral da aplicação]`
 - **O que só entendi depois (preencher na Semana 3, se aplicável):** `[preencher na Semana 3, se aplicável]`
