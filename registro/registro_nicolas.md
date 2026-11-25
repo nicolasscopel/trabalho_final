@@ -193,3 +193,37 @@ Hora final: 16:22(-3:00)
 - **O que eu tive de refazer ou corrigir:** `[nada]`
 - **O que surpreendeu:** `[capacidade de tomada de decisão]`
 - **O que só entendi depois (preencher na Semana 3, se aplicável):** `[preencher na Semana 3, se aplicável]`
+
+---
+
+## Etapa 5 — Hospedagem (Deploy) na Vercel e Teste Ponta a Ponta (Dia 4 / Passo 2.4)
+**Data:** 2026-11-25  
+**Hora inicial:** 15:06 (-03:00)  
+**Hora final:** `[preencher ao encerrar]`  
+**Harness / Modelo / Versão:** Antigravity CLI / Gemini 4 Hydrogen (XHigh)  
+**Ambiente local:** `node v22.22.1`, `npm 9.2.0`
+
+### ANTES da etapa (commitar antes de rodar!)
+- **Previsão de tempo:** 1h30min *(revisar/ajustar estimativa pessoal antes de commitar o registro)*
+- **Escopo da etapa (o que conta como "concluída"):**
+  1. Preparar `app/` para execução *serverless* na Vercel (`api/index.ts`, `vercel.json` com `includeFiles` para `assets/fonts/**`, compartilhamento de inicialização via `bootstrap.ts`, *fallback* de `VERCEL_URL`/`VERCEL_PROJECT_PRODUCTION_URL` em `APP_BASE_URL` e flag explícita `EXPOR_SANDBOX_VERIFICACAO` para permitir testar verificação de e-mail em produção com dados 100% fictícios);
+  2. Publicar a aplicação na Vercel conectada ao repositório Git (`Root Directory` = `app`) e ao PostgreSQL na Neon via variáveis de ambiente cadastradas no painel da Vercel (sem commitar `.env` nem segredos);
+  3. Validar na URL pública da Vercel (fora de `localhost`): `GET /health` e `GET /health/db` retornando `ok`, fluxo completo com **5 participantes fictícios** (cadastro, verificação de e-mail, login, inscrição, marcação de presença para **3 deles** pela coordenação, download de certificado em PDF válido para quem veio e bloqueio para quem faltou).
+- **O que vou delegar ao agente:** Criação do *entrypoint* `app/api/index.ts`, configuração `app/vercel.json`, extração de `criarAppDeConfig` / `criarAppDeAmbiente` em `app/src/bootstrap.ts`, ajustes em `env.ts`/`CertificadoService.ts`/`auth.ts`/`.env.example`, testes automatizados de configuração e *entrypoint* *serverless*, além do passo a passo completo para configurar e publicar na Vercel.
+- **O que NÃO vou delegar:** Criação da conta/projeto na Vercel, configuração das variáveis de ambiente reais (`DATABASE_URL`, `CPF_PEPPER`, `SESSION_SECRET`, `EXPOR_SANDBOX_VERIFICACAO`) no painel da Vercel, conferência de migrações/seed no banco alvo, execução do teste ponta a ponta na URL pública e preenchimento posterior da seção **DEPOIS** e do gasto no `registro/diario_grupo.md`.
+- **Onde acho que vai dar problema:**
+  - Nunca utilizei a Vercel antes: risco de errar a configuração de *Root Directory* (`app`), *Output Directory* (`public`) ou conflito com detecção automática do framework Express;
+  - Caminhos dos arquivos estáticos (`public/`) vs função *serverless* (`api/index.ts`) e empacotamento das fontes `.ttf` (`assets/fonts/`) no ambiente *serverless*;
+  - Fluxo de verificação de e-mail em produção usando dados fictícios (já que `NODE_ENV=production` ocultava o link *sandbox* por padrão);
+  - Diferenças entre o ambiente local e a Vercel (*cold start*, pool de conexões no Neon com `-pooler`, `trust proxy` e cookies `Secure` em HTTPS).
+
+### DEPOIS da etapa
+- **Hora de encerramento da etapa:** `[preencher ao encerrar]`
+- **Tempo real gasto:** `[preencher ao encerrar]`
+- **Gasto com modelo:** `[preencher ao encerrar]`
+- **Diferenças observadas entre ambiente local e deploy:** `[preencher ao encerrar]`
+- **O que o agente fez e eu aceitei direto:** `[preencher ao encerrar]`
+- **O que eu tive de refazer ou corrigir:** `[preencher ao encerrar]`
+- **Onde travei / o que precisei aprender:** `[preencher ao encerrar]`
+- **O que surpreendeu:** `[preencher ao encerrar]`
+- **O que só entendi depois (preencher na Semana 3, se aplicável):** `[preencher na Semana 3, se aplicável]`
