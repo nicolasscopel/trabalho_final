@@ -236,5 +236,21 @@ Hora final: 16:22(-3:00)
 - **O que o agente fez e eu aceitei direto:** Configuração *serverless* inicial (`api/index.ts`, `vercel.json`, `bootstrap.ts`, ajustes em `env.ts` e `CertificadoService.ts`), diagnóstico e correção de `coordenacao.js`, flexibilização comentada de `Cpf.ehValido` + atualização dos testes (`94/94` passando) e guia passo a passo da Vercel. *(Ajustar se revisou/alterou algo manualmente.)*
 - **O que eu tive de fazer manualmente / configurar na etapa:** `[ criação do projeto na Vercel, ajuste de branch/Root Directory, preenchimento das variáveis de ambiente e execução do teste dos 5 participantes]`
 - **Onde travei / o que precisei aprender (primeira vez usando Vercel):** `[comecei a encontrar alguns problemas na apliacção que foi criada, cpf, menus, erros de lógica]`
-- **O que surpreendeu:** `[]`
+- **O que surpreendeu:** `[a capacidade geral de encontrar soluções e criar funcionalidades]`
 - **O que só entendi depois (preencher na Semana 3, se aplicável):** `[preencher na Semana 3, se aplicável]`
+
+---
+
+## Fechamento da Semana 2 — Consolidado (Passo 2.5)
+**Data:** 2026-11-25 | **Tag de fechamento:** `fim-semana-2`
+
+| Etapa (Semana 2) | Previsão | Tempo real | Diferença | Gasto de tokens |
+| --- | --- | --- | --- | --- |
+| Etapa 2 — Esqueleto e schema Neon | 1h30min | ~54min | -36min *(aprox.)* | 113.4k + limite Opus 5.5 |
+| Etapa 3 — Inscrição, auth e painel | 2h00min | 44min | -1h16min | 176k |
+| Etapa 4 — Certificado em PDF | 1h30min | ~18min | -1h12min | 159k |
+| Etapa 5 — Deploy Vercel e teste E2E | 1h30min | 2h49min | +1h19min | 98k |
+| **Total da Semana 2** | **6h30min** | **4h45min** | **-1h45min** | **546.4k + limite Opus 5.5** |
+
+- **Total acumulado desde a Etapa 1 (Semana 1 + Semana 2):** `638.7k tokens` (+ limite do Claude Opus 5.5 na Etapa 2).
+- **Síntese para a Semana 3:** as etapas de construção local terminaram bem abaixo da estimativa, mas a integração em ambiente real (deploy *serverless* na Vercel + teste ponta a ponta no navegador) trouxe à tona problemas que não apareceram nos testes locais (bug de `ev.currentTarget.reset()` em `coordenacao.js`, empacotamento de fontes `.ttf`, flag `EXPOR_SANDBOX_VERIFICACAO` para testes fictícios e flexibilização da regra de CPF).
