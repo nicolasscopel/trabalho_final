@@ -222,6 +222,11 @@ Hora final: 16:22(-3:00)
 - **Tempo real gasto:** 2h49min (15:06 às 17:55 — diferença de +1h19min em relação à previsão de 1h30min)
 - **Gasto com modelo:** 98k tokens nesta etapa (`257k acumulados na janela - 159k da Etapa 4`) / `[informar US$/R$]`
 - **Resultado do teste ponta a ponta em produção:** Concluído na Vercel com a aplicação publicada, autenticação da coordenação, cadastro de 5 participantes fictícios, marcação de presença e emissão/bloqueio de certificados em PDF.
+- **Commits da etapa (evidência cronológica no Git):**
+  - `9e51b96` — Previsão (**ANTES**) da Etapa 5 em `registro/registro_nicolas.md`;
+  - `9b9b29e` — Configuração *serverless* da Vercel (`api/index.ts`, `vercel.json`, `bootstrap.ts`, `env.ts`, `CertificadoService.ts`);
+  - `211aff2` — Correção do reset após `await` no formulário da coordenação (`app/public/coordenacao.js`);
+  - `ff7d705` — Flexibilização comentada da validação de CPF para testes fictícios (`Cpf.ts` e `Cpf.test.ts` — apesar de a mensagem do commit repetir menção ao formulário, o diff altera apenas a validação de CPF).
 - **Problemas encontrados durante o desenvolvimento da etapa (e soluções aplicadas):**
   1. **Ausência de adaptação *serverless* e empacotamento para a Vercel (`9b9b29e`):** o projeto possuía apenas `src/server.ts` com `app.listen()`. Foi necessário criar `app/api/index.ts`, configurar `app/vercel.json` (`"framework": null`, `"outputDirectory": "public"` para o CDN servir os arquivos estáticos, `rewrites` de `/(.*)` para `/api` e `includeFiles: "assets/fonts/**"` para incluir as fontes `.ttf` na função *serverless*), extrair a inicialização compartilhada em `app/src/bootstrap.ts`, adicionar `app.set('trust proxy', 1)` em `app.ts`, adicionar *fallback* via `process.cwd()` em `CertificadoService.ts` e fallback automático de `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` em `APP_BASE_URL` (`env.ts`).
   2. **Verificação de e-mail em produção com dados 100% fictícios (`9b9b29e`):** como `NODE_ENV=production` ocultava o retorno do link *sandbox* e não há envio real de e-mail para endereços fictícios, foi preciso criar a variável explícita `EXPOR_SANDBOX_VERIFICACAO=true` no ambiente para conseguir validar os 5 cadastros fictícios no deploy.
