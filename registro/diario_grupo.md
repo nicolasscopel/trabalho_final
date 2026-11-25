@@ -15,6 +15,7 @@
 | 2026-11-23 | Nícolas    | Antigravity CLI (`agy` v1.5.15) / Claude Opus 5.5 (High) + Gemini 4 Hydrogen (Xhigh) | `[informar US$/R$]` (113.4k tokens + limite Opus 5.5) | `[atualizar]`      | Etapa 2: esqueleto do projeto, domínio, schema no Neon e 74 testes |
 | 2026-11-23 | Nícolas    | Antigravity CLI / Gemini 4 Hydrogen (Xhigh)                                          | `[176k tokens]`                                       | `[atualizar]`      | Etapa 3 (Passo 2.2): autenticação, inscrição, presença e painel    |
 | 2026-11-25 | Nícolas    | Antigravity CLI / Gemini 4 Hydrogen (XHigh)                                          | `[informar US$/R$]` (159k tokens)                     | `[atualizar]`      | Etapa 4 (Passo 2.3): geração de certificado em PDF (`PDFKit`)      |
+| 2026-11-25 | Nícolas    | Antigravity CLI / Gemini 4 Hydrogen (XHigh)                                          | `[informar US$/R$]` (98k tokens; 257k acum. na sessão) | `[atualizar]`      | Etapa 5 (Passo 2.4): deploy na Vercel, correção `coordenacao.js` e CPF fictício |
 
 ---
 

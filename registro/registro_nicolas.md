@@ -199,7 +199,7 @@ Hora final: 16:22(-3:00)
 ## Etapa 5 — Hospedagem (Deploy) na Vercel e Teste Ponta a Ponta (Dia 4 / Passo 2.4)
 **Data:** 2026-11-25  
 **Hora inicial:** 15:06 (-03:00)  
-**Hora final:** `[preencher ao encerrar]`  
+**Hora final:** 17:55 (-03:00)  
 **Harness / Modelo / Versão:** Antigravity CLI / Gemini 4 Hydrogen (XHigh)  
 **Ambiente local:** `node v22.22.1`, `npm 9.2.0`
 
@@ -218,12 +218,18 @@ Hora final: 16:22(-3:00)
   - Diferenças entre o ambiente local e a Vercel (*cold start*, pool de conexões no Neon com `-pooler`, `trust proxy` e cookies `Secure` em HTTPS).
 
 ### DEPOIS da etapa
-- **Hora de encerramento da etapa:** `[preencher ao encerrar]`
-- **Tempo real gasto:** `[preencher ao encerrar]`
-- **Gasto com modelo:** `[preencher ao encerrar]`
-- **Diferenças observadas entre ambiente local e deploy:** `[preencher ao encerrar]`
-- **O que o agente fez e eu aceitei direto:** `[preencher ao encerrar]`
-- **O que eu tive de refazer ou corrigir:** `[preencher ao encerrar]`
-- **Onde travei / o que precisei aprender:** `[preencher ao encerrar]`
-- **O que surpreendeu:** `[preencher ao encerrar]`
+- **Hora de encerramento da etapa:** 17:55 (-03:00)
+- **Tempo real gasto:** 2h49min (15:06 às 17:55 — diferença de +1h19min em relação à previsão de 1h30min)
+- **Gasto com modelo:** 98k tokens nesta etapa (`257k acumulados na janela - 159k da Etapa 4`) / `[informar US$/R$]`
+- **Resultado do teste ponta a ponta em produção:** Concluído na Vercel com a aplicação publicada, autenticação da coordenação, cadastro de 5 participantes fictícios, marcação de presença e emissão/bloqueio de certificados em PDF.
+- **Problemas encontrados durante o desenvolvimento da etapa (e soluções aplicadas):**
+  1. **Ausência de adaptação *serverless* e empacotamento para a Vercel (`9b9b29e`):** o projeto possuía apenas `src/server.ts` com `app.listen()`. Foi necessário criar `app/api/index.ts`, configurar `app/vercel.json` (`"framework": null`, `"outputDirectory": "public"` para o CDN servir os arquivos estáticos, `rewrites` de `/(.*)` para `/api` e `includeFiles: "assets/fonts/**"` para incluir as fontes `.ttf` na função *serverless*), extrair a inicialização compartilhada em `app/src/bootstrap.ts`, adicionar `app.set('trust proxy', 1)` em `app.ts`, adicionar *fallback* via `process.cwd()` em `CertificadoService.ts` e fallback automático de `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` em `APP_BASE_URL` (`env.ts`).
+  2. **Verificação de e-mail em produção com dados 100% fictícios (`9b9b29e`):** como `NODE_ENV=production` ocultava o retorno do link *sandbox* e não há envio real de e-mail para endereços fictícios, foi preciso criar a variável explícita `EXPOR_SANDBOX_VERIFICACAO=true` no ambiente para conseguir validar os 5 cadastros fictícios no deploy.
+  3. **Bug oculto da Etapa 3 na aba da Coordenação (`211aff2`):** o login da conta `"Coordenação Fictícia"` (`papel: "coordenacao"` no Neon) funcionava na aba Participante (`/`), mas falhava na aba Coordenação (`/coordenacao.html`). A causa era `ev.currentTarget.reset()` chamado **após** `await api(...)` nos formulários `form-coord-login` e `form-nova-atividade` em `app/public/coordenacao.js`: no navegador, `ev.currentTarget` se torna `null` depois do `await`, lançando `TypeError` logo após o cookie de sessão já ter sido gravado. Esse bug de frontend não havia sido coberto pelos testes HTTP da Etapa 3. Foi corrigido salvando `const form = ev.currentTarget` antes do `await` e tratando erros ao carregar atividades/inscritos.
+  4. **Validação matemática de CPF dificultando testes manuais (`ff7d705`):** embora o sistema não consulte CPFs reais na Receita, `Cpf.ehValido` em `app/src/domain/Cpf.ts` exigia dígitos verificadores válidos (módulo 11) e bloqueava sequências como `00000000000`. Para agilizar o cadastro dos 5 participantes fictícios do teste, a checagem de dígitos repetidos e verificadores foi comentada em `Cpf.ehValido` (mantendo apenas o formato de 11 dígitos numéricos e atualizando `Cpf.test.ts`), preservando a restrição de unicidade de `cpf_hash` no banco (exigindo 5 números distintos, como `00000000000` a `00000000004`).
+- **Diferenças observadas entre ambiente local e deploy:** No ambiente local tudo rodava em um único processo Express (`server.ts` servindo `public/` via `express.static` e `assets/fonts/` via `import.meta.dirname` com `NODE_ENV=development` expondo o *sandbox* automaticamente); na Vercel foi preciso separar estáticos (`outputDirectory: "public"`) da função *serverless* (`api/index.ts`), declarar explicitamente `includeFiles` para as fontes do PDF, considerar `trust proxy` para cookies `Secure` em HTTPS, configurar `Root Directory = app` / branch `nicolas` e habilitar `EXPOR_SANDBOX_VERIFICACAO=true`. *(Completar se notou mais alguma diferença na prática, ex.: cold start ou logs.)*
+- **O que o agente fez e eu aceitei direto:** Configuração *serverless* inicial (`api/index.ts`, `vercel.json`, `bootstrap.ts`, ajustes em `env.ts` e `CertificadoService.ts`), diagnóstico e correção de `coordenacao.js`, flexibilização comentada de `Cpf.ehValido` + atualização dos testes (`94/94` passando) e guia passo a passo da Vercel. *(Ajustar se revisou/alterou algo manualmente.)*
+- **O que eu tive de fazer manualmente / configurar na etapa:** `[ criação do projeto na Vercel, ajuste de branch/Root Directory, preenchimento das variáveis de ambiente e execução do teste dos 5 participantes]`
+- **Onde travei / o que precisei aprender (primeira vez usando Vercel):** `[comecei a encontrar alguns problemas na apliacção que foi criada, cpf, menus, erros de lógica]`
+- **O que surpreendeu:** `[]`
 - **O que só entendi depois (preencher na Semana 3, se aplicável):** `[preencher na Semana 3, se aplicável]`
