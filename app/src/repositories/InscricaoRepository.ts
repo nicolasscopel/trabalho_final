@@ -40,6 +40,10 @@ export interface InscricaoComAtividade {
   atividade: Atividade;
 }
 
+export interface DadosCertificadoInscricao extends InscricaoComAtividade {
+  participanteNome: string;
+}
+
 export interface InscritoCoordenacao {
   inscricaoId: string;
   usuarioId: string;
@@ -321,5 +325,46 @@ export class InscricaoRepository {
 
       return inscricao;
     });
+  }
+
+  /**
+   * Busca apenas os dados necessários para o certificado (sem CPF hash,
+   * senha hash ou e-mail do participante).
+   */
+  async buscarDadosCertificado(inscricaoId: string): Promise<DadosCertificadoInscricao | null> {
+    const { rows } = await this.db.query<LinhaInscricaoComAtividade & { usuario_nome: string }>(
+      `SELECT i.id, i.usuario_id, i.atividade_id, i.status, i.presente, i.criado_em, i.cancelada_em,
+              u.nome AS usuario_nome,
+              a.titulo AS atividade_titulo,
+              a.descricao AS atividade_descricao,
+              a.inicio AS atividade_inicio,
+              a.fim AS atividade_fim,
+              a.carga_horaria_minutos AS atividade_carga_horaria_minutos,
+              a.vagas AS atividade_vagas,
+              a.vagas_ocupadas AS atividade_vagas_ocupadas
+         FROM inscricoes i
+         JOIN usuarios u ON u.id = i.usuario_id
+         JOIN atividades a ON a.id = i.atividade_id
+        WHERE i.id = $1`,
+      [inscricaoId],
+    );
+
+    const r = rows[0];
+    if (!r) return null;
+
+    return {
+      inscricao: mapearInscricao(r),
+      atividade: mapearAtividade({
+        id: r.atividade_id,
+        titulo: r.atividade_titulo,
+        descricao: r.atividade_descricao,
+        inicio: r.atividade_inicio,
+        fim: r.atividade_fim,
+        carga_horaria_minutos: r.atividade_carga_horaria_minutos,
+        vagas: r.atividade_vagas,
+        vagas_ocupadas: r.atividade_vagas_ocupadas,
+      }),
+      participanteNome: Usuario.normalizarNome(r.usuario_nome),
+    };
   }
 }

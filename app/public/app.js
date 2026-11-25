@@ -229,10 +229,12 @@ function renderizarMinhasInscricoes() {
       acoes.appendChild(bPresenca);
 
       if (ins.podeEmitirCertificado) {
-        const bCert = document.createElement('span');
-        bCert.className = 'badge badge-ok';
-        bCert.textContent = 'Apto para certificado (Dia 3)';
-        acoes.appendChild(bCert);
+        const btnCert = document.createElement('button');
+        btnCert.type = 'button';
+        btnCert.className = 'btn-sucesso';
+        btnCert.textContent = 'Baixar certificado (PDF)';
+        btnCert.addEventListener('click', () => void baixarCertificado(ins.id, btnCert));
+        acoes.appendChild(btnCert);
       } else if (!ins.presente) {
         const btnCancelar = document.createElement('button');
         btnCancelar.type = 'button';
@@ -295,6 +297,47 @@ async function cancelar(inscricaoId) {
     await carregarTudo();
   } catch (erro) {
     mostrarMensagem(erro.message, 'erro');
+  }
+}
+
+function extrairNomeArquivo(cabecalho, fallback) {
+  const match = /filename="?([^"]+)"?/i.exec(cabecalho || '');
+  return match?.[1] || fallback;
+}
+
+async function baixarCertificado(inscricaoId, botao) {
+  limparMensagem();
+  const textoOriginal = botao.textContent;
+  botao.disabled = true;
+  botao.textContent = 'Gerando PDF...';
+
+  try {
+    const resp = await fetch(`/api/inscricoes/${encodeURIComponent(inscricaoId)}/certificado`, {
+      credentials: 'same-origin',
+    });
+    if (!resp.ok) {
+      const dados = await resp.json().catch(() => ({}));
+      throw new Error(dados?.erro?.mensagem || `Erro HTTP ${resp.status}`);
+    }
+
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = extrairNomeArquivo(
+      resp.headers.get('Content-Disposition'),
+      `certificado-${inscricaoId.slice(0, 8)}.pdf`,
+    );
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    mostrarMensagem('Certificado em PDF gerado com sucesso.');
+  } catch (erro) {
+    mostrarMensagem(erro.message, 'erro');
+  } finally {
+    botao.disabled = false;
+    botao.textContent = textoOriginal;
   }
 }
 

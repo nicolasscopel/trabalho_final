@@ -46,3 +46,9 @@ export class ConflictError extends AppError {
   readonly status = 409;
   readonly codigo = 'CONFLITO';
 }
+
+/** Falha interna inesperada ou de infraestrutura (500). */
+export class InternalError extends AppError {
+  readonly status = 500;
+  readonly codigo = 'ERRO_INTERNO';
+}

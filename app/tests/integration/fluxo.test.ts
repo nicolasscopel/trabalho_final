@@ -143,6 +143,17 @@ describe.skipIf(!url)('repositórios e concorrência (integração Postgres)', (
     const presentes = await inscricaoRepo.atualizarPresenca(segunda.inscricao.id, true);
     expect(presentes.podeEmitirCertificado).toBe(true);
 
+    const dadosCert = await inscricaoRepo.buscarDadosCertificado(segunda.inscricao.id);
+    expect(dadosCert).not.toBeNull();
+    expect(dadosCert?.participanteNome).toBe('Participante Fictício 90000000100');
+    expect(dadosCert?.atividade.titulo).toBe('Palestra Postgres Fictícia');
+    expect(dadosCert?.inscricao.podeEmitirCertificado).toBe(true);
+
+    const certInexistente = await inscricaoRepo.buscarDadosCertificado(
+      '00000000-0000-4000-8000-000000000000',
+    );
+    expect(certInexistente).toBeNull();
+
     const busca = await inscricaoRepo.listarPorAtividade(atividade.id, '90000000100');
     expect(busca).toHaveLength(1);
     expect(busca[0]?.presente).toBe(true);

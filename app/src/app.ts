@@ -20,6 +20,7 @@ import type { CpfHasher } from './security/CpfHasher.js';
 import { PasswordHasher } from './security/PasswordHasher.js';
 import type { SessionService } from './security/SessionService.js';
 import { TokenService } from './security/TokenService.js';
+import type { CertificadoService } from './services/CertificadoService.js';
 import { type EnviadorEmail, SandboxEnviadorEmail } from './services/EmailService.js';
 
 export const PASTA_PUBLIC = path.resolve(import.meta.dirname, '../public');
@@ -38,6 +39,7 @@ export interface DependenciasApp {
   tokenService?: TokenService | undefined;
   sessionService?: SessionService | undefined;
   enviadorEmail?: EnviadorEmail | undefined;
+  certificadoService?: CertificadoService | undefined;
   ambiente?: Ambiente | undefined;
   appBaseUrl?: string | undefined;
   exporSandboxVerificacao?: boolean | undefined;
@@ -103,7 +105,10 @@ export function createApp(deps: DependenciasApp = {}): Express {
       }),
     );
     app.use('/api/atividades', rotasAtividades(repos.atividades));
-    app.use('/api/inscricoes', rotasInscricoes(repos.inscricoes, deps.sessionService));
+    app.use(
+      '/api/inscricoes',
+      rotasInscricoes(repos.inscricoes, deps.sessionService, deps.certificadoService),
+    );
     app.use(
       '/api/coordenacao',
       rotasCoordenacao({

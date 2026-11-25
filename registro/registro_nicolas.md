@@ -164,7 +164,7 @@ Hora final: 16:22(-3:00)
 ## Etapa 4 — Geração de certificado em PDF (Dia 3 / Passo 2.3)
 **Data:** 2026-11-25  
 **Hora inicial:** 14:40 (-03:00)  
-**Hora final:** `[preencher ao encerrar]`  
+**Hora final:** 14:58 (-03:00)  
 **Harness / Modelo / Versão:** Antigravity CLI / Gemini 4 Hydrogen (XHigh)  
 **Ambiente local:** `node v22.22.1`, `npm 9.2.0`
 
@@ -185,12 +185,11 @@ Hora final: 16:22(-3:00)
   - Proteção direta da rota contra IDOR e emissão sem presença confirmada.
 
 ### DEPOIS da etapa
-- **Hora de encerramento da etapa:** `[preencher ao encerrar]`
-- **Tempo real gasto:** `[preencher ao encerrar]`
-- **Gasto com modelo:** `[preencher ao encerrar]`
-- **Decisões implícitas que o pedido original não especificava (e o que assumimos):** `[preencher ao encerrar]`
-- **O que o agente fez e eu aceitei direto:** `[preencher ao encerrar]`
-- **O que eu tive de refazer ou corrigir:** `[preencher ao encerrar]`
-- **Onde travei / o que precisei aprender:** `[preencher ao encerrar]`
-- **O que surpreendeu:** `[preencher ao encerrar]`
+- **Hora de encerramento da etapa:** 14:58 (-03:00)
+- **Tempo real gasto:** ~18min (14:40 às 14:58 — diferença de -1h12min em relação à previsão de 1h30min)
+- **Gasto com modelo:** 159k tokens (`[informar US$/R$]`)
+- **Decisões implícitas que o pedido original não especificava (e o que assumimos):** `[nenhuma]`
+- **O que o agente fez e eu aceitei direto:** `[gerou o certificado corretamente]`
+- **O que eu tive de refazer ou corrigir:** `[nada]`
+- **O que surpreendeu:** `[capacidade de tomada de decisão]`
 - **O que só entendi depois (preencher na Semana 3, se aplicável):** `[preencher na Semana 3, se aplicável]`

@@ -13,6 +13,7 @@ import {
 import { Inscricao } from '../../src/domain/Inscricao.js';
 import { type Papel, Usuario } from '../../src/domain/Usuario.js';
 import type {
+  DadosCertificadoInscricao,
   InscricaoComAtividade,
   InscritoCoordenacao,
 } from '../../src/repositories/InscricaoRepository.js';
@@ -256,6 +257,21 @@ function criarRepositoriosEmMemoria(): {
         else ins.removerPresenca();
         return ins;
       },
+
+      async buscarDadosCertificado(
+        inscricaoId: string,
+      ): Promise<DadosCertificadoInscricao | null> {
+        const ins = inscricoes.get(inscricaoId);
+        if (!ins) return null;
+        const u = usuarios.get(ins.usuarioId);
+        const a = atividades.get(ins.atividadeId);
+        if (!u || !a) return null;
+        return {
+          inscricao: ins,
+          atividade: a,
+          participanteNome: u.nome,
+        };
+      },
     },
   };
 
@@ -432,7 +448,18 @@ describe('API da Semana Acadêmica (Passo 2.2)', () => {
       .send({});
     expect(cancelIdor.status).toBe(404);
 
-    // 7. Coordenação lista inscritos (sem vazar CPF), filtra por nome e marca presença de Alice.
+    // 7. Certificado é bloqueado antes da confirmação de presença (403) e para não autenticados (401).
+    const certSemAuth = await request(app).get(
+      `/api/inscricoes/${inscOk.body.inscricao.id}/certificado`,
+    );
+    expect(certSemAuth.status).toBe(401);
+
+    const certSemPresenca = await agenteAlice.get(
+      `/api/inscricoes/${inscOk.body.inscricao.id}/certificado`,
+    );
+    expect(certSemPresenca.status).toBe(403);
+
+    // 8. Coordenação lista inscritos (sem vazar CPF), filtra por nome e marca presença de Alice.
     const listaInscritos = await agenteCoord.get(
       `/api/coordenacao/atividades/${atv1.body.atividade.id}/inscritos?busca=alice`,
     );
@@ -447,11 +474,72 @@ describe('API da Semana Acadêmica (Passo 2.2)', () => {
     expect(marcarPresenca.body.inscricao.presente).toBe(true);
     expect(marcarPresenca.body.inscricao.podeEmitirCertificado).toBe(true);
 
+    // Anti-IDOR: Bob não pode baixar o certificado de Alice (recebe 404).
+    const certIdor = await agenteBob.get(
+      `/api/inscricoes/${inscOk.body.inscricao.id}/certificado`,
+    );
+    expect(certIdor.status).toBe(404);
+
+    // Alice agora consegue baixar o certificado em PDF válido.
+    const certOk = await agenteAlice
+      .get(`/api/inscricoes/${inscOk.body.inscricao.id}/certificado`)
+      .buffer(true);
+    expect(certOk.status).toBe(200);
+    expect(certOk.headers['content-type']).toContain('application/pdf');
+    expect(certOk.headers['content-disposition']).toMatch(
+      /^attachment; filename="certificado-[0-9a-f]{8}\.pdf"$/,
+    );
+    expect(certOk.headers['cache-control']).toBe('no-store');
+    expect(Buffer.isBuffer(certOk.body)).toBe(true);
+    expect((certOk.body as Buffer).subarray(0, 5).toString('ascii')).toBe('%PDF-');
+    expect((certOk.body as Buffer).toString('latin1')).not.toContain(cpfAlice);
+
     // Alice não pode cancelar após presença confirmada.
     const cancelComPresenca = await agenteAlice
       .post(`/api/inscricoes/${inscOk.body.inscricao.id}/cancelar`)
       .send({});
     expect(cancelComPresenca.status).toBe(409);
+  });
+
+  it('bloqueia certificado para inscrição cancelada e valida UUID da rota', async () => {
+    const { app, enviadorEmail, cpfCoord } = await montarAmbienteTeste('development');
+
+    const agenteCoord = request.agent(app);
+    await agenteCoord.post('/api/auth/login').send({ cpf: cpfCoord, senha: 'SenhaCoord123' });
+
+    const atv = await agenteCoord.post('/api/coordenacao/atividades').send({
+      titulo: 'Palestra Cancelamento Fictícia',
+      inicio: '2026-11-27T19:00:00-03:00',
+      fim: '2026-11-27T20:00:00-03:00',
+      cargaHorariaMinutos: 60,
+      vagas: 10,
+    });
+
+    const cpfPart = cpfFicticio('333222111');
+    await request(app).post('/api/auth/cadastro').send({
+      nome: 'Diana Fictícia',
+      email: 'diana.ficticia@exemplo.local',
+      cpf: cpfPart,
+      senha: 'SenhaSegura123',
+    });
+    const msg = enviadorEmail.ultimaPara('diana.ficticia@exemplo.local')!;
+    await request(app).post('/api/auth/verificar-email').send({ token: msg.token });
+
+    const agentePart = request.agent(app);
+    await agentePart.post('/api/auth/login').send({ cpf: cpfPart, senha: 'SenhaSegura123' });
+
+    const insc = await agentePart
+      .post('/api/inscricoes')
+      .send({ atividadeId: atv.body.atividade.id });
+    const inscricaoId = insc.body.inscricao.id as string;
+
+    await agentePart.post(`/api/inscricoes/${inscricaoId}/cancelar`).send({});
+
+    const certCancelada = await agentePart.get(`/api/inscricoes/${inscricaoId}/certificado`);
+    expect(certCancelada.status).toBe(403);
+
+    const uuidInvalido = await agentePart.get('/api/inscricoes/nao-e-uuid/certificado');
+    expect(uuidInvalido.status).toBe(400);
   });
 
   it('usa resposta genérica no login e marca cookie Secure em produção', async () => {
