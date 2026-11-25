@@ -158,3 +158,39 @@ Hora final: 16:22(-3:00)
 - **Onde travei / o que precisei aprender:** `[é mais difícil corrigir/alterar algo quando não foi criado com domínio]`
 - **O que surpreendeu:** `[a qualidade geral da aplicação]`
 - **O que só entendi depois (preencher na Semana 3, se aplicável):** `[preencher na Semana 3, se aplicável]`
+
+---
+
+## Etapa 4 — Geração de certificado em PDF (Dia 3 / Passo 2.3)
+**Data:** 2026-11-25  
+**Hora inicial:** 14:40 (-03:00)  
+**Hora final:** `[preencher ao encerrar]`  
+**Harness / Modelo / Versão:** Antigravity CLI / Gemini 4 Hydrogen (XHigh)  
+**Ambiente local:** `node v22.22.1`, `npm 9.2.0`
+
+### ANTES da etapa (commitar antes de rodar!)
+- **Previsão de tempo:** 1h30min *(revisar/ajustar estimativa pessoal antes de commitar o registro)*
+- **Escopo da etapa (o que conta como "concluída"):**
+  1. Serviço de geração de certificado em PDF em memória (`Buffer`) usando `PDFKit`, com fontes `.ttf` embutidas no repositório (`app/assets/fonts/`) para garantir acentuação em português (`ç`, `ã`, `é`) sem depender de fontes instaladas no sistema operacional;
+  2. Layout em paisagem (A4) contendo: nome do participante, título da atividade, data/período, carga horária, código de registro (ID da inscrição) e aviso discreto de ambiente de testes/dados fictícios — **sem exibir CPF, e-mail ou dados sensíveis**;
+  3. Endpoint protegido `GET /api/inscricoes/:id/certificado` exigindo sessão autenticada, checando posse da inscrição (anti-IDOR: `404` para inscrição inexistente ou de outro usuário) e liberando o PDF **apenas** quando `podeEmitirCertificado === true` (`status === 'ativa' && presente === true`, retornando `403` caso contrário);
+  4. Botão para baixar o certificado em PDF na interface do participante (`app/public/app.js`) quando `podeEmitirCertificado` for verdadeiro + testes unitários, HTTP e de integração contra o Postgres (Neon).
+- **O que vou delegar ao agente:** Instalação de `pdfkit` e `@types/pdfkit`, cópia/empacotamento das fontes `.ttf` (SIL OFL) em `app/assets/fonts/`, implementação do `CertificadoService`, consulta SQL de dados do certificado no `InscricaoRepository`, rota `GET /api/inscricoes/:id/certificado`, atualização do botão no frontend (`app/public/app.js`) e criação dos testes da etapa.
+- **O que NÃO vou delegar:** Inspeção visual do PDF gerado em leitor local (acentuação, alinhamento, nomes/títulos longos e conferência de que não há CPF), revisão da licença das fontes `.ttf` incluídas no projeto e preenchimento posterior da seção **DEPOIS** e do gasto em `registro/diario_grupo.md`.
+- **Onde acho que vai dar problema:**
+  - Resolução de caminho das fontes `.ttf` entre `src/` (`tsx`/Vitest) e `dist/` (`tsc` / futuro deploy na Vercel);
+  - Quebra de linha ou sobreposição de textos no `PDFKit` quando o nome do participante ou o título da atividade forem longos;
+  - Acentuação quebrada se alguma parte do documento usar fonte padrão do `PDFKit` em vez da `.ttf` embutida;
+  - Tratamento de erros assíncronos dentro dos *streams* do `PDFKit` sem derrubar o servidor nem vazar dados em logs;
+  - Proteção direta da rota contra IDOR e emissão sem presença confirmada.
+
+### DEPOIS da etapa
+- **Hora de encerramento da etapa:** `[preencher ao encerrar]`
+- **Tempo real gasto:** `[preencher ao encerrar]`
+- **Gasto com modelo:** `[preencher ao encerrar]`
+- **Decisões implícitas que o pedido original não especificava (e o que assumimos):** `[preencher ao encerrar]`
+- **O que o agente fez e eu aceitei direto:** `[preencher ao encerrar]`
+- **O que eu tive de refazer ou corrigir:** `[preencher ao encerrar]`
+- **Onde travei / o que precisei aprender:** `[preencher ao encerrar]`
+- **O que surpreendeu:** `[preencher ao encerrar]`
+- **O que só entendi depois (preencher na Semana 3, se aplicável):** `[preencher na Semana 3, se aplicável]`
