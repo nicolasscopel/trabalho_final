@@ -14,6 +14,7 @@ describe('loadConfig', () => {
       cpfPepper: undefined,
       sessionSecret: undefined,
       appBaseUrl: 'http://localhost:3000',
+      exporSandboxVerificacao: true,
     });
   });
 
@@ -32,6 +33,31 @@ describe('loadConfig', () => {
     expect(config.dbPoolMax).toBe(2);
     expect(config.sessionSecret).toBe(SESSION);
     expect(config.appBaseUrl).toBe('https://semana.exemplo.com');
+    expect(config.exporSandboxVerificacao).toBe(false);
+  });
+
+  it('usa VERCEL_PROJECT_PRODUCTION_URL / VERCEL_URL e EXPOR_SANDBOX_VERIFICACAO quando informados', () => {
+    const comVercelUrl = loadConfig({
+      NODE_ENV: 'production',
+      DATABASE_URL: 'postgresql://usuario:senha@host-pooler.exemplo/db?sslmode=verify-full',
+      CPF_PEPPER: PEPPER,
+      SESSION_SECRET: SESSION,
+      VERCEL_URL: 'semana-preview.vercel.app',
+      EXPOR_SANDBOX_VERIFICACAO: 'true',
+    });
+    expect(comVercelUrl.appBaseUrl).toBe('https://semana-preview.vercel.app');
+    expect(comVercelUrl.exporSandboxVerificacao).toBe(true);
+
+    const comProdUrl = loadConfig({
+      NODE_ENV: 'production',
+      DATABASE_URL: 'postgresql://usuario:senha@host-pooler.exemplo/db?sslmode=verify-full',
+      CPF_PEPPER: PEPPER,
+      SESSION_SECRET: SESSION,
+      VERCEL_URL: 'semana-preview.vercel.app',
+      VERCEL_PROJECT_PRODUCTION_URL: 'semana.vercel.app',
+    });
+    expect(comProdUrl.appBaseUrl).toBe('https://semana.vercel.app');
+    expect(comProdUrl.exporSandboxVerificacao).toBe(false);
   });
 
   it('exige DATABASE_URL, CPF_PEPPER e SESSION_SECRET em produção', () => {
@@ -47,6 +73,7 @@ describe('loadConfig', () => {
     expect(() => loadConfig({ CPF_PEPPER: 'curto' })).toThrow(ConfigError);
     expect(() => loadConfig({ SESSION_SECRET: 'curto' })).toThrow(ConfigError);
     expect(() => loadConfig({ APP_BASE_URL: 'ftp://x' })).toThrow(ConfigError);
+    expect(() => loadConfig({ EXPOR_SANDBOX_VERIFICACAO: 'sim' })).toThrow(ConfigError);
   });
 
   it('não vaza o valor das variáveis na mensagem de erro', () => {

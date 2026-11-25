@@ -3,7 +3,19 @@ import path from 'node:path';
 import PDFDocument from 'pdfkit';
 import { InternalError } from '../domain/errors.js';
 
-export const PASTA_FONTES = path.resolve(import.meta.dirname, '../../assets/fonts');
+export function resolverPastaFontesPadrao(): string {
+  const candidatos = [
+    path.resolve(import.meta.dirname, '../../assets/fonts'),
+    path.resolve(import.meta.dirname, '../assets/fonts'),
+    path.resolve(process.cwd(), 'assets/fonts'),
+  ];
+  return (
+    candidatos.find((dir) => existsSync(path.join(dir, 'LiberationSans-Regular.ttf'))) ??
+    candidatos[0]!
+  );
+}
+
+export const PASTA_FONTES = resolverPastaFontesPadrao();
 
 const FUSO_EVENTO = 'America/Sao_Paulo';
 
@@ -112,7 +124,7 @@ function tamanhoFonteTituloAtividade(tituloAtividade: string): number {
 export class CertificadoService {
   private readonly fontes: FontesCertificado;
 
-  constructor(pastaFontes: string = PASTA_FONTES) {
+  constructor(pastaFontes: string = resolverPastaFontesPadrao()) {
     this.fontes = fontesPadrao(pastaFontes);
   }
 

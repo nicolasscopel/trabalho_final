@@ -5,7 +5,7 @@
   "description": "Inscrição, presença e certificado da semana acadêmica num lugar só (Cenário 8 — Programação Agêntica).",
   "type": "module",
   "engines": {
-    "node": ">=22.12"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",

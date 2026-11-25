@@ -68,6 +68,7 @@ export function createApp(deps: DependenciasApp = {}): Express {
   const app = express();
 
   app.disable('x-powered-by');
+  app.set('trust proxy', 1);
   app.use(express.json({ limit: '100kb' }));
 
   app.use('/health', rotasHealth(temPing(deps.db) ? deps.db : undefined));

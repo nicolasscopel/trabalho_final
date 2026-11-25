@@ -42,10 +42,13 @@ export interface DependenciasRotasAuth {
 const HASH_SENHA_FICTICIO =
   'scrypt$16384$8$1$AAAAAAAAAAAAAAAAAAAAAA==$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==';
 
-function montarRespostaSandbox(token: string) {
+function montarRespostaSandbox(token: string, ambiente: Ambiente) {
   const caminho = `/verificar-email.html?token=${encodeURIComponent(token)}`;
   return {
-    aviso: 'Modo sandbox ativo apenas em desenvolvimento local.',
+    aviso:
+      ambiente === 'production'
+        ? 'Modo sandbox de testes ativo para dados 100% fictícios.'
+        : 'Modo sandbox ativo apenas em desenvolvimento local.',
     verificarUrl: caminho,
     token,
   };
@@ -91,7 +94,7 @@ export function rotasAuth(deps: DependenciasRotasAuth): Router {
       usuario: usuario.toPublico(),
       mensagem: 'Cadastro realizado. Verifique seu e-mail para ativar a conta.',
       ...(deps.exporSandboxVerificacao
-        ? { sandboxVerificacao: montarRespostaSandbox(tokenGerado.token) }
+        ? { sandboxVerificacao: montarRespostaSandbox(tokenGerado.token, deps.ambiente) }
         : {}),
     });
   });
@@ -136,7 +139,7 @@ export function rotasAuth(deps: DependenciasRotasAuth): Router {
     res.json({
       mensagem: 'Novo link de verificação gerado.',
       ...(deps.exporSandboxVerificacao
-        ? { sandboxVerificacao: montarRespostaSandbox(tokenGerado.token) }
+        ? { sandboxVerificacao: montarRespostaSandbox(tokenGerado.token, deps.ambiente) }
         : {}),
     });
   });

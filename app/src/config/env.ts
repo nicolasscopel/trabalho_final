@@ -19,6 +19,8 @@ export interface Config {
   sessionSecret: string | undefined;
   /** URL base para montar links de verificação de e-mail. */
   appBaseUrl: string;
+  /** Define se o link de verificação sandbox é retornado na API (útil para testes fictícios). */
+  exporSandboxVerificacao: boolean;
 }
 
 export class ConfigError extends Error {
@@ -51,6 +53,20 @@ function textoOpcional(valor: string | undefined): string | undefined {
   return limpo ? limpo : undefined;
 }
 
+function lerBooleanoOpcional(
+  valor: string | undefined,
+  padrao: boolean,
+  nome: string,
+  problemas: string[],
+): boolean {
+  const limpo = textoOpcional(valor)?.toLowerCase();
+  if (limpo === undefined) return padrao;
+  if (limpo === 'true') return true;
+  if (limpo === 'false') return false;
+  problemas.push(`${nome} deve ser true ou false.`);
+  return padrao;
+}
+
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const problemas: string[] = [];
 
@@ -67,8 +83,17 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const databaseUrl = textoOpcional(env.DATABASE_URL);
   const cpfPepper = textoOpcional(env.CPF_PEPPER);
   const sessionSecret = textoOpcional(env.SESSION_SECRET);
-  const appBaseUrlBruta = textoOpcional(env.APP_BASE_URL) ?? `http://localhost:${porta}`;
+  const urlVercel =
+    textoOpcional(env.VERCEL_PROJECT_PRODUCTION_URL) ?? textoOpcional(env.VERCEL_URL);
+  const fallbackBaseUrl = urlVercel ? `https://${urlVercel}` : `http://localhost:${porta}`;
+  const appBaseUrlBruta = textoOpcional(env.APP_BASE_URL) ?? fallbackBaseUrl;
   const appBaseUrl = appBaseUrlBruta.replace(/\/+$/, '');
+  const exporSandboxVerificacao = lerBooleanoOpcional(
+    env.EXPOR_SANDBOX_VERIFICACAO,
+    ambiente === 'development',
+    'EXPOR_SANDBOX_VERIFICACAO',
+    problemas,
+  );
 
   if (databaseUrl && !/^postgres(ql)?:\/\//.test(databaseUrl)) {
     problemas.push('DATABASE_URL deve começar com postgres:// ou postgresql://.');
@@ -100,6 +125,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     cpfPepper,
     sessionSecret,
     appBaseUrl,
+    exporSandboxVerificacao,
   };
 }
 
