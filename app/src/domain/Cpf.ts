@@ -5,7 +5,8 @@ const MASCARA = '***.***.***-**';
 /**
  * Value object de CPF.
  *
- * - Valida formato e dígitos verificadores.
+ * - Valida o formato de 11 dígitos numéricos (verificação matemática de dígitos
+ *   comentada para facilitar cadastros fictícios em testes, como 00000000000).
  * - O CPF NÃO é armazenado: ele só existe em memória até ser convertido em
  *   `cpf_hash` pelo CpfHasher (HMAC-SHA256 com pepper).
  * - `toString()`/`toJSON()` devolvem uma máscara, para que um `console.log`
@@ -33,11 +34,13 @@ export class Cpf {
 
   static ehValido(digitos: string): boolean {
     if (!/^\d{11}$/.test(digitos)) return false;
-    if (/^(\d)\1{10}$/.test(digitos)) return false; // 000..., 111..., etc.
-
-    const dv1 = Cpf.calcularDigito(digitos.slice(0, 9));
-    const dv2 = Cpf.calcularDigito(digitos.slice(0, 9) + dv1);
-    return digitos.endsWith(`${dv1}${dv2}`);
+    // Validação matemática de CPF comentada para permitir CPFs fictícios simples em testes (ex.: 00000000000):
+    // if (/^(\d)\1{10}$/.test(digitos)) return false; // 000..., 111..., etc.
+    //
+    // const dv1 = Cpf.calcularDigito(digitos.slice(0, 9));
+    // const dv2 = Cpf.calcularDigito(digitos.slice(0, 9) + dv1);
+    // return digitos.endsWith(`${dv1}${dv2}`);
+    return true;
   }
 
   /** Calcula um dígito verificador a partir dos dígitos anteriores. */

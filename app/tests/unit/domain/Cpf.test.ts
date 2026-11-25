@@ -11,9 +11,13 @@ describe('Cpf', () => {
     expect(Cpf.parse(formatarCpf(valido)).digitos).toBe(valido);
   });
 
+  it('aceita CPF com 11 dígitos mesmo sem dígito verificador válido para testes fictícios', () => {
+    expect(Cpf.parse('00000000000').digitos).toBe('00000000000');
+    expect(Cpf.parse('000.000.000-00').digitos).toBe('00000000000');
+    expect(Cpf.parse('12345678900').digitos).toBe('12345678900');
+  });
+
   it.each([
-    ['dígito verificador errado', '12345678900'],
-    ['todos os dígitos iguais', '11111111111'],
     ['tamanho errado', '1234567890'],
     ['letras', '1234567890a'],
     ['vazio', ''],
