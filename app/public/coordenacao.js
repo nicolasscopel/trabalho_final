@@ -219,13 +219,18 @@ async function alternarPresenca(inscricaoId, presente) {
 async function inicializar() {
   const ok = await verificarSessao();
   if (ok) {
-    await carregarAtividades();
+    try {
+      await carregarAtividades();
+    } catch (erro) {
+      mostrarMsg(erro.message, 'erro');
+    }
   }
 }
 
 document.getElementById('form-coord-login').addEventListener('submit', async (ev) => {
   ev.preventDefault();
-  const fd = new FormData(ev.currentTarget);
+  const form = ev.currentTarget;
+  const fd = new FormData(form);
   try {
     await api('/api/auth/login', {
       method: 'POST',
@@ -234,7 +239,7 @@ document.getElementById('form-coord-login').addEventListener('submit', async (ev
         senha: String(fd.get('senha') || ''),
       }),
     });
-    ev.currentTarget.reset();
+    form.reset();
     mostrarMsg('Login realizado.');
     await inicializar();
   } catch (erro) {
@@ -244,7 +249,8 @@ document.getElementById('form-coord-login').addEventListener('submit', async (ev
 
 document.getElementById('form-nova-atividade').addEventListener('submit', async (ev) => {
   ev.preventDefault();
-  const fd = new FormData(ev.currentTarget);
+  const form = ev.currentTarget;
+  const fd = new FormData(form);
   try {
     await api('/api/coordenacao/atividades', {
       method: 'POST',
@@ -257,7 +263,7 @@ document.getElementById('form-nova-atividade').addEventListener('submit', async 
         vagas: Number(fd.get('vagas')),
       }),
     });
-    ev.currentTarget.reset();
+    form.reset();
     mostrarMsg('Atividade cadastrada com sucesso.');
     await carregarAtividades();
   } catch (erro) {
@@ -265,8 +271,12 @@ document.getElementById('form-nova-atividade').addEventListener('submit', async 
   }
 });
 
-selectAtividade.addEventListener('change', () => void carregarInscritos());
-inputBusca.addEventListener('input', () => void carregarInscritos());
+selectAtividade.addEventListener('change', () => {
+  void carregarInscritos().catch((erro) => mostrarMsg(erro.message, 'erro'));
+});
+inputBusca.addEventListener('input', () => {
+  void carregarInscritos().catch((erro) => mostrarMsg(erro.message, 'erro'));
+});
 
 elBtnSair.addEventListener('click', async () => {
   await api('/api/auth/logout', { method: 'POST', body: '{}' }).catch(() => undefined);
